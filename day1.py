@@ -3,74 +3,64 @@ totalCalibrationValue = 0
 a = -1
 b = -1
 
-stage = 2
 
-letters = ["one", "two","three","four","five","six","seven","eight","nine"]
+letters = ["1","2","3","4","5","6","7","8","9","one", "two","three","four","five","six","seven","eight","nine"]
 numbers = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
+wordRepresentations = ["one", "two","three","four","five","six","seven","eight","nine"]
 
-def extract_word_representations(input_string):
-    current_word = ''
-    words = []
 
-    for char in input_string:
-        if char.isalpha():
-            current_word += char
-        else:
-            if current_word and current_word.isdigit():
-                words.append(current_word)
-                current_word = ''
-                
-    if current_word and current_word.isdigit():
-        words.append(current_word)
+def find_indices_of_strings(text, strings_to_find):
+    indices = []
+    
+    for word in strings_to_find:
+        start_index = 0
+        while True:
+            index = text.find(word, start_index)
+            if index == -1:
+                break
+            indices.append((word, index))
+            start_index = index + 1
+    
+    return indices
 
-    word_representations = [word for word in words if word.isdigit() and 0 <= int(word) <= 9]
-    print (input_string, word_representations)
-    return word_representations
-
-def find_word_representations(input_string):
-    words = [word for word in input_string.split() if word.isalpha() and word.isdigit()]
-    print (input_string, words)
-    return words
-
-def find_substring_index(main_string, substring):
-    index = main_string.find(substring)
-    return index
 
 for line in open("2023 day 1 input.txt", "r"):
-    if stage == 1:
-        numbers = [char for char in line if char.isdigit()]
+    
+    #numbers = [char for char in line if char.isdigit()]
+    #print (numbers)
+    #if numbers:
+    #    a = int(numbers[0])
+    #    b = int(numbers[-1])
+    #    s = str(a) + str(b)
+    #    calibrationValue = int(s)
+    #    #print (line, a,b, s, calibrationValue)
 
-        if numbers:
-            a = int(numbers[0])
-            b = int(numbers[-1])
-            s = str(a) + str(b)
-            calibrationValue = int(s)
-            #print (line, a,b, s, calibrationValue)
+    indices = find_indices_of_strings(line, letters)
 
-    elif stage == 2:
-        numbers = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
-        digitNumbers = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]
+    #print(f"Indices of occurrences: {indices}")     
 
-        digitNumbers = [index for index, char in enumerate(line) if char.isdigit()]
-        digitActualNumber = [line[index] for index in digitNumbers]
+    # Find the tuple with the lowest second element
+    min_tuple = min(indices, key=lambda x: x[1])
 
-        for i in range(len(letters)):
-            numbers[i] = find_substring_index(line, letters[i])
+    # Find the tuple with the highest second element
+    max_tuple = max(indices, key=lambda x: x[1])   
 
-        # Get index
-        non_negative_numbers = [num for num in numbers if num >= 0]
+    #print (min_tuple[0], max_tuple[0], type(min_tuple[0]), type(min_tuple[1]))
+    if (min_tuple[0].isdigit()):
+        a = int(min_tuple[0])
+    else:
+        a = wordRepresentations.index(min_tuple[0]) + 1
 
-        if non_negative_numbers:
-            #lowest = min(non_negative_numbers)
-            #highest = max(non_negative_numbers)
+    if (max_tuple[0].isdigit()):
+        b = int(max_tuple[0])
+    else:
+        b = wordRepresentations.index(max_tuple[0]) + 1
 
-            a = min(numbers.index(min(filter(lambda x: x >= 0, non_negative_numbers))), *digitNumbers)
-            b = max(numbers.index(max(filter(lambda x: x >= 0, non_negative_numbers))), *digitNumbers)
-
-            s = str(line[a]) + str(line[b])
-            calibrationValue = int(s)
-            print (line, numbers, digitNumbers, digitActualNumber, a, b, s)
-        
+    #a = int(numbers[0])
+    #b = int(numbers[-1])
+    s = str(a) + str(b)
+    calibrationValue = int(s)
+    print (line, a,b, s)
 
         
     totalCalibrationValue += calibrationValue
